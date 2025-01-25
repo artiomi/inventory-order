@@ -1,0 +1,28 @@
+package io.artiomi.inventory.svc.adapter.out.db;
+
+import io.artiomi.inventory.svc.adapter.InventoryItemDbMapper;
+import io.artiomi.inventory.svc.adapter.out.db.model.InventoryItemDb;
+import io.artiomi.inventory.svc.domain.model.InventoryItem;
+import io.artiomi.inventory.svc.port.out.db.InventoryItemDbPort;
+import org.springframework.stereotype.Component;
+
+@Component
+public class InventoryItemDbAdapter implements InventoryItemDbPort {
+    private final InventoryItemRepo inventoryItemRepo;
+    private final InventoryItemDbMapper inventoryItemDbMapper;
+
+    public InventoryItemDbAdapter(
+            InventoryItemRepo inventoryItemRepo,
+            InventoryItemDbMapper inventoryItemDbMapper
+    ) {
+        this.inventoryItemRepo = inventoryItemRepo;
+        this.inventoryItemDbMapper = inventoryItemDbMapper;
+    }
+
+    @Override
+    public InventoryItem save(InventoryItem item) {
+        InventoryItemDb dbEntry = inventoryItemDbMapper.toDbEntry(item);
+        InventoryItemDb saved = inventoryItemRepo.save(dbEntry);
+        return inventoryItemDbMapper.toModelEntry(saved);
+    }
+}
