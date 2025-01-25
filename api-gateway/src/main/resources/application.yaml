@@ -4,11 +4,14 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: inventory_service_route
+        - id: inventory_svc_route
           predicates:
-            - Path=/inventory/**
-          uri: http://localhost:8082/inventory/
-
+            - Path=/inventories/**
+          uri: ${app.routes.inventory.uri}
+        - id: order_svc_route
+          predicates:
+            - Path=/orders/**
+          uri: ${app.routes.order.uri}
 
 springdoc:
   api-docs:
@@ -18,11 +21,22 @@ springdoc:
     enabled: true
     config-url: /v3/api-docs/swagger-config
     urls:
-      - name: gateway-service
+      - name: gateway-svc
         url: /v3/api-docs
-      - name: inventory-service
-        url: /inventory/v3/api-docs
+      - name: inventory-svc
+        url: ${app.routes.inventory.api-docs}
+      - name: order-svc
+        url: ${app.routes.order.api-docs}
 
 server:
   port: 8083
   forward-headers-strategy: framework
+
+app:
+  routes:
+    inventory:
+      uri: http://localhost:8082/inventories/
+      api-docs: /inventories/v3/api-docs
+    order:
+      uri: http://localhost:8081/orders/
+      api-docs: /orders/v3/api-docs

@@ -14,8 +14,8 @@ public class InventoryItemSvc {
         this.inventoryItemDbPort = inventoryItemDbPort;
     }
 
-    public void save(InventoryItem item) {
-        inventoryItemDbPort.save(item);
+    public InventoryItem save(InventoryItem item) {
+        return inventoryItemDbPort.save(item);
     }
 
     public List<InventoryItem> list() {

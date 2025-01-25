@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
 @Slf4j
 @Component
 public class InventoryItemDbAdapter implements InventoryItemDbPort {
@@ -31,10 +32,8 @@ public class InventoryItemDbAdapter implements InventoryItemDbPort {
 
     @Override
     public List<InventoryItem> list() {
-        List<InventoryItemDb> all = inventoryItemRepo.findAll();
-//        log.info("from db: {}", all);
-        return all.stream()
-                .map(inventoryItemDbMapper::toModelEntry)
-                .toList();
+        List<InventoryItemDb> inventories = inventoryItemRepo.findAll();
+
+        return inventoryItemDbMapper.toModelEntries(inventories);
     }
 }
