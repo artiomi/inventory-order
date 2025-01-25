@@ -14,8 +14,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>order-api-client</module>
-        <module>inventory-api-client</module>
         <module>inventory-svc</module>
         <module>order-svc</module>
         <module>api-gateway</module>

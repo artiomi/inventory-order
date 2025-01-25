@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: inventory_service_route
+          predicates:
+            - Path=/inventory/**
+          uri: http://localhost:8082/inventory/
+
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: gateway-service
+        url: /v3/api-docs
+      - name: inventory-service
+        url: /inventory/v3/api-docs
+
+server:
+  port: 8083
+  forward-headers-strategy: framework

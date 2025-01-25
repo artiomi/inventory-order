@@ -10,11 +10,19 @@
     </parent>
 
     <artifactId>api-gateway</artifactId>
+    <properties>
+        <openapi-webflux-ui.version>2.6.0</openapi-webflux-ui.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway-mvc</artifactId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <version>${openapi-webflux-ui.version}</version>
         </dependency>
     </dependencies>
 
