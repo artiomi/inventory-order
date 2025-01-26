@@ -5,7 +5,9 @@ import io.artiomi.inventory.api.contract.model.AcquireRequestApi;
 import io.artiomi.inventory.api.contract.model.InventoryItemApi;
 import io.artiomi.inventory.svc.adapter.InventoryItemApiMapper;
 import io.artiomi.inventory.svc.domain.InventoryItemSvc;
+import io.artiomi.inventory.svc.domain.model.AcquireRequest;
 import io.artiomi.inventory.svc.domain.model.InventoryItem;
+import io.artiomi.inventory.svc.domain.model.InventoryItemQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,8 +29,9 @@ public class InventoryApiAdapter implements InventoryApiResource {
     }
 
     @Override
-    public ResponseEntity<List<InventoryItemApi>> list(String id, String name) {
-        List<InventoryItem> inventories = inventoryItemSvc.list();
+    public ResponseEntity<List<InventoryItemApi>> search(String id, String name) {
+        var query = InventoryItemQuery.builder().id(id).name(name).build();
+        List<InventoryItem> inventories = inventoryItemSvc.search(query);
 
         return ResponseEntity.ok(inventoryItemApiMapper.toApiEntries(inventories));
     }
@@ -43,12 +46,14 @@ public class InventoryApiAdapter implements InventoryApiResource {
 
     @Override
     public ResponseEntity<InventoryItemApi> acquire(String id, AcquireRequestApi acquireRequest) {
-        return null;
+        AcquireRequest request = inventoryItemApiMapper.toModelAcquireRequest(acquireRequest);
+        InventoryItem item = inventoryItemSvc.acquire(id, request);
+        return ResponseEntity.ok(inventoryItemApiMapper.toApiEntry(item));
     }
 
     @Override
     public ResponseEntity<Void> delete(String id) {
-        //TODO call delete
+        inventoryItemSvc.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

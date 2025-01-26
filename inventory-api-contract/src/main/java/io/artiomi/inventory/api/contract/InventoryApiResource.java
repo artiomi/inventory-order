@@ -11,7 +11,7 @@ import java.util.List;
 public interface InventoryApiResource {
 
     @GetMapping("/inventories/")
-    ResponseEntity<List<InventoryItemApi>> list(
+    ResponseEntity<List<InventoryItemApi>> search(
             @RequestParam(name = "id", required = false) String id,
             @RequestParam(name = "name", required = false) String name);
 
