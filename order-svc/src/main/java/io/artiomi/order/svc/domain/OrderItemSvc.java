@@ -26,7 +26,7 @@ public class OrderItemSvc {
         return orderItemDbPort.search(query);
     }
 
-    public OrderItem create(OrderItem item) {
+    public OrderItem save(OrderItem item) {
 
         InventoryValue updatedValue = InventoryValue.builder()
                 .id(item.inventoryRef())

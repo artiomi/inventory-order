@@ -2,6 +2,7 @@ package io.artiomi.order.svc.adapter.in.api;
 
 import io.artiomi.order.api.contract.OrderApiResource;
 import io.artiomi.order.api.contract.model.OrderItemApi;
+import io.artiomi.order.api.contract.model.OrderItemUpsertRequest;
 import io.artiomi.order.svc.adapter.OrderItemApiMapper;
 import io.artiomi.order.svc.domain.OrderItemSvc;
 import io.artiomi.order.svc.domain.model.OrderItem;
@@ -34,9 +35,17 @@ public class OrderApiAdapter implements OrderApiResource {
     }
 
     @Override
-    public ResponseEntity<OrderItemApi> create(OrderItemApi item) {
-        OrderItem modelEntry = orderItemApiMapper.toModelEntry(item);
-        OrderItem saved = orderItemSvc.create(modelEntry);
+    public ResponseEntity<OrderItemApi> update(String id, OrderItemUpsertRequest request) {
+        OrderItem modelEntry = orderItemApiMapper.toModelEntry(id, request);
+        OrderItem saved = orderItemSvc.save(modelEntry);
+
+        return ResponseEntity.ok(orderItemApiMapper.toApiEntry(saved));
+    }
+
+    @Override
+    public ResponseEntity<OrderItemApi> update(OrderItemUpsertRequest request) {
+        OrderItem modelEntry = orderItemApiMapper.toModelEntry(null, request);
+        OrderItem saved = orderItemSvc.save(modelEntry);
 
         return ResponseEntity.ok(orderItemApiMapper.toApiEntry(saved));
     }
