@@ -1,0 +1,47 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: order-svc
+spec:
+  selector:
+    app: order-svc
+  type: LoadBalancer
+  ports:
+    - port: 8081
+      targetPort: 8081
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-svc
+spec:
+  selector:
+    matchLabels:
+      app: order-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: order-svc
+    spec:
+      containers:
+        - name: order-svc
+          image: order-svc:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: order-secrets
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: order-secrets
+                  key: password
+            - name: APP_DATASOURCE_HOST
+              value: order-postgresql-service
+            - name: APP_URL_INVENTORY
+              value: http://inventory-svc:8082

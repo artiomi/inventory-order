@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: order-postgresql
+  name: order-postgresql-service
+spec:
+  type: ClusterIP
+  ports:
+  - name: "http"
+    port: 15432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    service: order-postgresql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-postgresql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: order-postgresql-service
+  template:
+    metadata:
+      labels:
+        service: order-postgresql
+        name: order-postgresql-service
+    spec:
+      containers:
+      - image: 'postgres:12.22'
+        name: orders-db
+        env:
+          - name: POSTGRES_DB
+            value: orders
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: order-secrets
+                key: username
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: order-secrets
+                key: password

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-cm
+data:
+  INVENTORY_URI: http://inventory-svc:8082/inventories/
+  ORDER_URI: http://order-svc:8081/orders/

@@ -6,6 +6,7 @@ import io.artiomi.inventory.svc.domain.model.InventoryItem;
 import io.artiomi.inventory.svc.domain.model.InventoryItemQuery;
 import io.artiomi.inventory.svc.port.out.db.InventoryItemDbPort;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +15,13 @@ import java.util.List;
 @Service
 public class InventoryItemSvc {
     private final InventoryItemDbPort inventoryItemDbPort;
+    private final String acquireWarnPrefix;
 
-    public InventoryItemSvc(InventoryItemDbPort inventoryItemDbPort) {
+    public InventoryItemSvc(
+            InventoryItemDbPort inventoryItemDbPort,
+            @Value("${app.acquire.warn}") String acquireWarnPrefix) {
         this.inventoryItemDbPort = inventoryItemDbPort;
+        this.acquireWarnPrefix = acquireWarnPrefix;
     }
 
     public InventoryItem save(InventoryItem item) {
@@ -35,8 +40,9 @@ public class InventoryItemSvc {
         InventoryItem inventoryItem = inventoryItemDbPort.findById(id)
                 .orElseThrow(() -> InventoryException.notFound(id));
         long newCount = inventoryItem.availableCount() - request.count();
-        if (newCount < 0) {//TODO review log
-            log.warn("acqure failed for ID: [{}], requested: {}, currently available: {}", id, request, inventoryItem);
+        if (newCount < 0) {
+            log.warn("{} acquire failed for ID: [{}], requested: {}, currently available: {}",
+                    acquireWarnPrefix, id, request, inventoryItem);
             throw InventoryException.failed("Acquire failed:" + id);
         }
         InventoryItem updatedEntry = inventoryItem.toBuilder().availableCount(newCount).build();

@@ -1,0 +1,44 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: api-gateway-svc
+spec:
+  selector:
+    app: api-gateway-svc
+  type: LoadBalancer
+  ports:
+    - port: 8083
+      targetPort: 8083
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-svc
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api-gateway-svc
+    spec:
+      containers:
+        - name: api-gateway-svc
+          image: api-gateway-svc:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8083
+          env:
+            - name: APP_ROUTES_INVENTORY_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: api-gateway-cm
+                  key: INVENTORY_URI
+            - name: APP_ROUTES_ORDER_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: api-gateway-cm
+                  key: ORDER_URI
+

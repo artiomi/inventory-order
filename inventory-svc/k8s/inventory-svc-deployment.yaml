@@ -1,0 +1,50 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: inventory-svc
+spec:
+  selector:
+    app: inventory-svc
+  type: LoadBalancer
+  ports:
+    - port: 8082
+      targetPort: 8082
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-svc
+spec:
+  selector:
+    matchLabels:
+      app: inventory-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: inventory-svc
+    spec:
+      containers:
+        - name: inventory-svc
+          image: inventory-svc:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8082
+          env:
+            - name: APP_ACQUIRE_WARN
+              valueFrom:
+                configMapKeyRef:
+                  name: inventory-cm
+                  key: APP_ACQUIRE_WARN
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: inventory-secrets
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: inventory-secrets
+                  key: password
+            - name: APP_DATASOURCE_HOST
+              value: inventory-postgresql-service
