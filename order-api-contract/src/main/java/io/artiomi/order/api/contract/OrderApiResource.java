@@ -13,11 +13,11 @@ import java.util.List;
 public interface OrderApiResource {
 
     @GetMapping("/orders/")
-    ResponseEntity<List<OrderItemApi>> list(
+    ResponseEntity<List<OrderItemApi>> search(
             @RequestParam(name = "id", required = false) String id,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "inventoryRef", required = false) String inventoryRef);
 
     @PostMapping("/orders/")
-    ResponseEntity<OrderItemApi> save(@Valid @RequestBody OrderItemApi item);
+    ResponseEntity<OrderItemApi> create(@Valid @RequestBody OrderItemApi item);
 }

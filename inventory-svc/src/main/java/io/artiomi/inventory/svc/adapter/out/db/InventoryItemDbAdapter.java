@@ -8,6 +8,7 @@ import io.artiomi.inventory.svc.port.out.db.InventoryItemDbPort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -32,21 +33,24 @@ public class InventoryItemDbAdapter implements InventoryItemDbPort {
                 .id(query.getId())
                 .name(query.getName())
                 .build();
-        ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("availableCount");
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("availableCount", "version");
         return Example.of(probe, matcher);
     }
 
     @Override
     public InventoryItem save(InventoryItem item) {
         InventoryItemDb dbEntry = inventoryItemDbMapper.toDbEntry(item);
-        InventoryItemDb saved = inventoryItemRepo.save(dbEntry);
+        InventoryItemDb entryWithVersion = inventoryItemRepo.findById(item.id())
+                .map(e -> dbEntry.toBuilder().version(e.getVersion()).build())
+                .orElse(dbEntry);
+        InventoryItemDb saved = inventoryItemRepo.save(entryWithVersion);
 
         return inventoryItemDbMapper.toModelEntry(saved);
     }
 
     @Override
     public List<InventoryItem> search(InventoryItemQuery query) {
-        List<InventoryItemDb> inventories = inventoryItemRepo.findAll(toSearchExample(query));
+        List<InventoryItemDb> inventories = inventoryItemRepo.findAll(toSearchExample(query), Sort.by("id"));
 
         return inventoryItemDbMapper.toModelEntries(inventories);
     }

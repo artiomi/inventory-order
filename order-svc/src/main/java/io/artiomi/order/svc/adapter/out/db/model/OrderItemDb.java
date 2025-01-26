@@ -2,6 +2,7 @@ package io.artiomi.order.svc.adapter.out.db.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "order_items")
+@Builder
 public class OrderItemDb {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

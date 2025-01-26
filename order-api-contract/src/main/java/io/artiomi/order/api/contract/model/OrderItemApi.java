@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderItemApi {
-    @NotBlank
+
     private String id;
     @NotBlank
     private String name;
