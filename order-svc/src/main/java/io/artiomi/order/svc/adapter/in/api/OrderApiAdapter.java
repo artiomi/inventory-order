@@ -7,6 +7,7 @@ import io.artiomi.order.svc.adapter.OrderItemApiMapper;
 import io.artiomi.order.svc.domain.OrderItemSvc;
 import io.artiomi.order.svc.domain.model.OrderItem;
 import io.artiomi.order.svc.domain.model.OrderItemQuery;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,11 +40,11 @@ public class OrderApiAdapter implements OrderApiResource {
         OrderItem modelEntry = orderItemApiMapper.toModelEntry(id, request);
         OrderItem saved = orderItemSvc.save(modelEntry);
 
-        return ResponseEntity.ok(orderItemApiMapper.toApiEntry(saved));
+        return new ResponseEntity<>(orderItemApiMapper.toApiEntry(saved), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<OrderItemApi> update(OrderItemUpsertRequest request) {
+    public ResponseEntity<OrderItemApi> create(OrderItemUpsertRequest request) {
         OrderItem modelEntry = orderItemApiMapper.toModelEntry(null, request);
         OrderItem saved = orderItemSvc.save(modelEntry);
 
