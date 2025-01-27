@@ -1,4 +1,6 @@
-# Getting Started
+# inventory-order application
+
+<img src="images/inventory-scheme.svg" alt="inventory order details"  height="500">
 
 ### Reference Documentation
 For further reference, please consider the following sections:
