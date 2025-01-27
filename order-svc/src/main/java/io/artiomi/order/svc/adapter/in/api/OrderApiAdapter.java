@@ -7,12 +7,14 @@ import io.artiomi.order.svc.adapter.OrderItemApiMapper;
 import io.artiomi.order.svc.domain.OrderItemSvc;
 import io.artiomi.order.svc.domain.model.OrderItem;
 import io.artiomi.order.svc.domain.model.OrderItemQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 public class OrderApiAdapter implements OrderApiResource {
     private final OrderItemSvc orderItemSvc;
@@ -30,24 +32,35 @@ public class OrderApiAdapter implements OrderApiResource {
     @Override
     public ResponseEntity<List<OrderItemApi>> search(String id, String name, String inventoryRef) {
         OrderItemQuery query = OrderItemQuery.builder().id(id).name(name).inventoryRef(inventoryRef).build();
-
+        log.info("Order search request received. {}", query);
         List<OrderItem> orders = orderItemSvc.search(query);
-        return ResponseEntity.ok(orderItemApiMapper.toApiEntries(orders));
+        List<OrderItemApi> result = orderItemApiMapper.toApiEntries(orders);
+        log.info("Order search result. {}", result);
+        return ResponseEntity.ok(result);
     }
 
     @Override
     public ResponseEntity<OrderItemApi> update(String id, OrderItemUpsertRequest request) {
+        log.info("Order update request received. id:[{}] payload {}", id, request);
+
         OrderItem modelEntry = orderItemApiMapper.toModelEntry(id, request);
         OrderItem saved = orderItemSvc.save(modelEntry);
 
-        return new ResponseEntity<>(orderItemApiMapper.toApiEntry(saved), HttpStatus.CREATED);
+        OrderItemApi result = orderItemApiMapper.toApiEntry(saved);
+        log.info("Order update request complete. {}", result);
+
+        return ResponseEntity.ok(result);
     }
 
     @Override
     public ResponseEntity<OrderItemApi> create(OrderItemUpsertRequest request) {
+        log.info("Order create request received. {}", request);
+
         OrderItem modelEntry = orderItemApiMapper.toModelEntry(null, request);
         OrderItem saved = orderItemSvc.save(modelEntry);
+        OrderItemApi result = orderItemApiMapper.toApiEntry(saved);
+        log.info("Order create request complete. {}", result);
 
-        return ResponseEntity.ok(orderItemApiMapper.toApiEntry(saved));
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 }

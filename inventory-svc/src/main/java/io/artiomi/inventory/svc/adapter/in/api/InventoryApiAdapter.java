@@ -31,29 +31,46 @@ public class InventoryApiAdapter implements InventoryApiResource {
     @Override
     public ResponseEntity<List<InventoryItemApi>> search(String id, String name) {
         var query = InventoryItemQuery.builder().id(id).name(name).build();
+        log.info("Inventory item search request received {}", query);
         List<InventoryItem> inventories = inventoryItemSvc.search(query);
 
-        return ResponseEntity.ok(inventoryItemApiMapper.toApiEntries(inventories));
+        List<InventoryItemApi> response = inventoryItemApiMapper.toApiEntries(inventories);
+        log.info("Inventory item search result {}", response);
+
+        return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<InventoryItemApi> save(InventoryItemApi item) {
+        log.info("Inventory save request received {}", item);
+
         InventoryItem modelEntry = inventoryItemApiMapper.toModelEntry(item);
         InventoryItem saved = inventoryItemSvc.save(modelEntry);
 
-        return ResponseEntity.ok(inventoryItemApiMapper.toApiEntry(saved));
+        InventoryItemApi result = inventoryItemApiMapper.toApiEntry(saved);
+        log.info("Inventory save result {}", result);
+
+        return ResponseEntity.ok(result);
     }
 
     @Override
     public ResponseEntity<InventoryItemApi> acquire(String id, AcquireRequestApi acquireRequest) {
+        log.info("Inventory acquire request received. id: [{}] payload {}", id, acquireRequest);
+
         AcquireRequest request = inventoryItemApiMapper.toModelAcquireRequest(acquireRequest);
         InventoryItem item = inventoryItemSvc.acquire(id, request);
-        return ResponseEntity.ok(inventoryItemApiMapper.toApiEntry(item));
+
+        InventoryItemApi result = inventoryItemApiMapper.toApiEntry(item);
+        log.info("Inventory acquire request result {}", result);
+        return ResponseEntity.ok(result);
     }
 
     @Override
     public ResponseEntity<Void> delete(String id) {
+        log.info("Inventory delete request received. id: [{}] ", id);
+
         inventoryItemSvc.delete(id);
+        log.info("Inventory delete request complete. id: [{}] ", id);
         return ResponseEntity.noContent().build();
     }
 }
