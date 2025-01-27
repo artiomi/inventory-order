@@ -22,7 +22,7 @@ import java.util.List;
 public interface OrderApiResource {
     @Operation(summary = "Query existing orders")
     @Parameters({
-            @Parameter(name = "id", description = "Id of an inventory to be queried"),
+            @Parameter(name = "id", description = "Id of an order to be queried"),
             @Parameter(name = "name", description = "Name of parameter used for query"),
             @Parameter(name = "inventoryRef", description = "Id of a existing inventory")
     })
@@ -42,7 +42,7 @@ public interface OrderApiResource {
 
     @Operation(summary = "Update order item with given id")
     @Parameters({
-            @Parameter(name = "id", description = "Id of an inventory to be updated"),
+            @Parameter(name = "id", description = "Id of an order to be updated"),
             @Parameter(name = "request", description = "Payload of order to be updated",
                     content = @Content(schema = @Schema(implementation = OrderItemUpsertRequest.class)))}
     )

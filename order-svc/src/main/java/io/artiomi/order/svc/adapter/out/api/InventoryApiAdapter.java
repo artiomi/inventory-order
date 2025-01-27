@@ -1,4 +1,4 @@
-package io.artiomi.order.svc.adapter.out.db;
+package io.artiomi.order.svc.adapter.out.api;
 
 import io.artiomi.inventory.api.client.InventoryApiClient;
 import io.artiomi.inventory.api.contract.model.AcquireRequestApi;

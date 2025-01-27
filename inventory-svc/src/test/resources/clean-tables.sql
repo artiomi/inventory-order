@@ -1,0 +1,1 @@
+delete from "inventory_items";
