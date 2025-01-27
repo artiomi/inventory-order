@@ -1,6 +1,6 @@
 # inventory-order application
 
-<img src="images/inventory-scheme.svg" alt="inventory order details"  height="800">
+<img src="images/inventory-scheme.svg" alt="inventory order details"  height="700">
 
 ### Reference Documentation
 For further reference, please consider the following sections:
