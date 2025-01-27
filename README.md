@@ -2,19 +2,72 @@
 
 <img src="images/inventory-scheme.svg" alt="inventory order details"  height="600">
 
-### Reference Documentation
-For further reference, please consider the following sections:
+## Introduction
+The project presents an application used for inventories and order of items of specific inventory type creation.
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/3.4.2/maven-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.4.2/maven-plugin/build-image.html)
+### Technical stack
+`Java 21` <br>
+`Spring Boot 3.4.2` <br>
+`PostgreSql 12`<br>
 
-### Maven Parent overrides
+### Modules
+- __api-gateway__ - Spring API Gateway service used for routing requests to underlying service
+- __order-svc__ - service used for orders CRUD
+- __inventory-svc__ - service used for inventories CRUD
+- __inventory-api-client__ - utility project for creating Spring Feign REST client of *inventory-svc*
+- __inventory-api-contract__ - utility project for storing REST client contract of *inventory-svc*
+- __order-api-contract__ - utility project for storing REST client contract of *order-svc*
 
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
+## Deployment
 
-http://localhost:8082/inventory/swagger-ui.html
-http://localhost:8083/swagger-ui.html
+### Kubernetes deployment 
+In order to start the entire project *Kubernetes* cluster should be configured on local
+
+```shell
+# maven package
+mvn package
+
+# inventory-svc deploy
+docker build -t inventory-svc ./inventory-svc/
+
+# delete existing deployments
+kubectl delete -f ./inventory-svc/k8s/secret.yaml
+kubectl delete -f ./inventory-svc/k8s/pg-deployment.yaml
+kubectl delete -f ./inventory-svc/k8s/config-map.yaml
+kubectl delete -f ./inventory-svc/k8s/inventory-svc-deployment.yaml
+
+# deploy new version
+kubectl create -f ./inventory-svc/k8s/secret.yaml
+kubectl create -f ./inventory-svc/k8s/pg-deployment.yaml
+kubectl create -f ./inventory-svc/k8s/config-map.yaml
+kubectl create -f ./inventory-svc/k8s/inventory-svc-deployment.yaml
+
+# order-svc deploy
+docker build -t order-svc ./order-svc/
+
+# delete existing deployments
+kubectl delete -f ./order-svc/k8s/secret.yaml
+kubectl delete -f ./order-svc/k8s/pg-deployment.yaml
+kubectl delete -f ./order-svc/k8s/order-svc-deployment.yaml
+
+# deploy new version
+kubectl create -f ./order-svc/k8s/secret.yaml
+kubectl create -f ./order-svc/k8s/pg-deployment.yaml
+kubectl create -f ./order-svc/k8s/order-svc-deployment.yaml
+
+# api-gateway deploy
+docker build -t api-gateway-svc ./api-gateway/
+
+# delete existing deployments
+kubectl delete -f ./api-gateway/k8s/config-map.yaml
+kubectl delete -f ./api-gateway/k8s/api-gateway-deployment.yaml
+
+# deploy new version
+kubectl create -f ./api-gateway/k8s/config-map.yaml
+kubectl create -f ./api-gateway/k8s/api-gateway-deployment.yaml
+```
+### Swagger documentation
+In order to visualize Swagger documentation of related projects in *api-gateway*, it is required ot select project name in __Select a definition__ dropdown menu.
+* [inventory-svc](http://localhost:8082/inventories/swagger-ui.html)
+* [order-svc](http://localhost:8081/orders/swagger-ui.html)
+* [api-gateway](http://localhost:8083/swagger-ui.html)
